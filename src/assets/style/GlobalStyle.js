@@ -7,6 +7,9 @@ const GlobalStyle = createGlobalStyle`
     .headerGap {
         padding-top: ${headerGap};
     }
+    html {
+        scroll-behavior: smooth;
+    }
 
     /* 
         Sets the footer at the bottom page or

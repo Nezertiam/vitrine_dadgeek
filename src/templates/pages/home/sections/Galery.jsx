@@ -9,13 +9,36 @@ const Galery = () => {
         r.keys().forEach((item, index) => { images[item.replace('./', '')] = r(item); });
         return images
     }
-    const [images, setImages] = useState(null);
+    const [collections, setCollections] = useState(null);
     const [popupImg, setPopupImg] = useState(null);
 
+    
     useEffect(() => {
-        const imgs = importAll(require.context('../../../../assets/images', false, /\.(png|jpe?g|svg|PNG|JPE?G|SVG)$/))
 
-        setImages(Object.entries(imgs));
+        const unorderedImages = importAll(require.context(`../../../../assets/images`, true, /\.(png|jpe?g|svg|PNG|JPE?G|SVG)$/))
+        const orderedImages = {};
+        Object.entries(unorderedImages).map((image) => {
+            const path = image[0];
+            const src = image[1];
+            const splitted = path.split("/");
+            const collection = splitted[0];
+            const name = splitted[1];
+            const colSplitted = collection.split("_");
+            if (Number.isInteger(parseInt(colSplitted[0]))) collection.slice(1);
+            const collectionName = colSplitted.join(" ");
+
+            if (!orderedImages[collection]) {
+                orderedImages[collection] = {
+                    name: collectionName,
+                    images: []
+                };
+            }
+
+            orderedImages[collection].images.push({ name, src });
+
+        })
+        setCollections(Object.values(orderedImages));
+
     }, [])
 
     const handleClick = (image) => {
@@ -28,19 +51,28 @@ const Galery = () => {
     return (
         <StyledSection className="mt-5 d-flex justify-content-center position-relative">
             <div className="tiles">
-                <div className="tiles-container p-0 d-flex flex-wrap justify-content-center">
-                    {
-                        (images && images.length > 0) &&
-                        images.map((image, index) => {
-                            const name = image[0].replaceAll("_", " ").split(".")[0];
-                            return (
-                                <div className="d-flex justify-content-center p-2 p-sm-3 p-md-2" key={index} >
-                                    <GaleryTile src={image[1]} name={name} onClick={() => handleClick(image)} />
+                {
+                    (collections && collections.length != 0) &&
+                    collections.map((collection, colIndex) => {
+                        return (
+                            <div key={"col" + colIndex}>
+                                <h3 className="mt-5">Collection&nbsp;: {collection.name}</h3>
+                                <hr />
+                                <div className="tiles-container p-0 pb-5 d-flex flex-wrap justify-content-center">
+                                    {
+                                        collection.images.map((image, imgIndex) => {
+                                            return (
+                                                <div className="d-flex justify-content-center p-2 p-sm-3 p-md-2" key={"img" + imgIndex} >
+                                                    <GaleryTile src={image.src} name={image.name.split(".")[0]} onClick={() => handleClick(image)} />
+                                                </div>
+                                            )
+                                        })
+                                    }
                                 </div>
-                            )
-                        })
-                    }
-                </div>
+                            </div>
+                        )
+                    })
+                }
             </div>
 
             {/* {
