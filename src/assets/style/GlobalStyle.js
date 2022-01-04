@@ -1,6 +1,12 @@
 import { createGlobalStyle } from 'styled-components'
 
+const headerGap = "75px";
+
 const GlobalStyle = createGlobalStyle`
+
+    .headerGap {
+        padding-top: ${headerGap};
+    }
 
     /* 
         Sets the footer at the bottom page or

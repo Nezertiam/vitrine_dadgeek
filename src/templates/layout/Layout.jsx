@@ -21,7 +21,7 @@ const Layout = () => {
 
       <Header />
       
-      <main id="main" class="container-fluid p-0">
+      <main id="main" className="container-fluid p-0">
           <MainRouting />
       </main>
 
